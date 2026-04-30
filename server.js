@@ -45,7 +45,6 @@ app.post("/api/analyze", async (req, res) => {
     console.log("Content-Type:", contentType);
 
     let reviews = null;
-    let url = null;
     let imageData = null;
     let context = "";
 
@@ -67,7 +66,6 @@ app.post("/api/analyze", async (req, res) => {
       // Handle JSON input
       const body = req.body || {};
       reviews = body.reviews;
-      url = body.url;
       context = body.context || "";
     }
 
@@ -93,7 +91,9 @@ app.post("/api/analyze", async (req, res) => {
     } else if (imageData) {
       insight = await analyzeImage(apiKey, imageData, context);
     } else {
-      insight = await analyzePage(apiKey, url, context);
+      return res.status(400).json({
+        error: "Only reviews and images are supported",
+      });
     }
 
     return res.json(insight);
