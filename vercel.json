@@ -4,7 +4,7 @@
   "devCommand": "concurrently \"npm run frontend\" \"npm run server\"",
   "framework": "vite",
   "env": {
-    "OPENROUTER_API_KEY": "@openrouter_api_key",
+    "OPENROUTER_API_KEY": "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",
     "OPENAI_API_KEY": "@openai_api_key"
   }
 }
