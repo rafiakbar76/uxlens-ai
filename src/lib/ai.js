@@ -27,16 +27,14 @@ const systemPrompt = `
 You are ReviewLens AI — an assistant that analyzes user reviews 
 to produce concise, actionable UX insights.
 
-Focus on:
-- usability
-- accessibility
-- visual hierarchy
-- performance issues
-- clarity of UI elements
+IMPORTANT: Provide your analysis in INDONESIAN language (Bahasa Indonesia).
 
-Output MUST be strict JSON with:
-{
-  "summary": "...",
+Focus on:
+- usability (kemudahan penggunaan)
+- accessibility (aksesibilitas)
+- visual hierarchy (hierarki visual)
+- performance issues (masalah kinerja)
+- clarity of UI elements (kejelasan elemen UI)
   "findings": "...",
   "checklist": "..."
 }
@@ -49,6 +47,8 @@ You are a UX analyst AI.
 
 Analyze the following user reviews and evaluate user experience quality.
 
+IMPORTANT: Provide your analysis in INDONESIAN language (Bahasa Indonesia).
+
 Return STRICT JSON:
 {
   "ux_score": number (0-100),
@@ -56,16 +56,16 @@ Return STRICT JSON:
     "positive": percentage,
     "negative": percentage
   },
-  "issues": [array of UX problems],
-  "insight": "explanation",
-  "recommendations": [array of suggestions]
+  "issues": [array of UX problems in Indonesian],
+  "insight": "explanation in Indonesian",
+  "recommendations": [array of suggestions in Indonesian]
 }
 
 Focus on:
-- usability
-- performance
-- UI clarity
-- user satisfaction
+- usability (kemudahan penggunaan)
+- performance (kinerja)
+- UI clarity (kejelasan antarmuka)
+- user satisfaction (kepuasan pengguna)
 
 User Reviews:
 """
@@ -103,7 +103,7 @@ async function createWithFallback(client, baseBody, models = fallbackModels) {
 
 export async function analyzeReviews(apiKey, reviews) {
   if (!reviews || reviews.trim() === '') {
-    throw new Error('Reviews text is missing')
+    throw new Error('Teks ulasan tidak ditemukan')
   }
 
   console.log('Analyzing reviews with OpenRouter API...')
@@ -142,7 +142,7 @@ export async function analyzeReviews(apiKey, reviews) {
     const content = completion.choices?.[0]?.message?.content || ''
 
     if (!content) {
-      throw new Error('No content in AI response')
+      throw new Error('Tidak ada konten dalam respons AI')
     }
 
     let parsed = null
@@ -173,7 +173,7 @@ export async function analyzeReviews(apiKey, reviews) {
 
 export async function analyzeImage(apiKey, imageBase64, context = "") {
   if (!imageBase64) {
-    throw new Error("Image data is missing");
+    throw new Error("Data gambar tidak ditemukan");
   }
 
   console.log("Analyzing image with OpenRouter API...");
@@ -189,8 +189,8 @@ export async function analyzeImage(apiKey, imageBase64, context = "") {
         content: [
           {
             type: "text",
-            text: `Analyze the following UI screenshot and return the requested JSON. ${
-              context ? `Context: ${context}` : ""
+            text: `Analisis screenshot UI berikut dan kembalikan JSON yang diminta. ${
+              context ? `Konteks: ${context}` : ""
             }`,
           },
           {
@@ -224,7 +224,7 @@ export async function analyzeImage(apiKey, imageBase64, context = "") {
     const content = completion.choices?.[0]?.message?.content || ""
 
     if (!content) {
-      throw new Error("No content in AI response")
+      throw new Error("Tidak ada konten dalam respons AI")
     }
 
     let parsed = null
