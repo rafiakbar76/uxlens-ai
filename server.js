@@ -15,12 +15,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3001;
 
-// ================= CORS (FIX WAJIB) =================
+// ================= CORS (FIX UTAMA) =================
 app.use(cors({
-  origin: true, // allow all (biar ga ribet di Railway + Vercel)
+  origin: true,
   credentials: true
 }));
-
 app.options("*", cors());
 
 // ================= MIDDLEWARE =================
@@ -34,7 +33,6 @@ console.log("OPENROUTER_API_KEY:", process.env.OPENROUTER_API_KEY ? "SET" : "NOT
 app.post("/api/analyze", async (req, res) => {
   try {
     const contentType = req.headers["content-type"] || "";
-    console.log("Content-Type:", contentType);
 
     let reviews = null;
     let url = null;
@@ -91,10 +89,10 @@ app.post("/api/analyze", async (req, res) => {
   } catch (error) {
     console.error("API ERROR:", error);
 
-    // fallback supaya frontend tidak crash
+    // fallback supaya frontend tetap jalan
     return res.status(200).json({
       summary: "Fallback analysis",
-      findings: "AI temporarily unavailable (rate limit / no credits)",
+      findings: "AI temporarily unavailable",
       checklist: "Try again later or use your own API key"
     });
   }
@@ -112,7 +110,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// ================= START SERVER =================
+// ================= START =================
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
