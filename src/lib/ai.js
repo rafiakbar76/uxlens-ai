@@ -196,7 +196,7 @@ export async function analyzeImage(apiKey, imageBase64, context = "") {
           {
             type: "image_url",
             image_url: {
-              url: `data:image/jpeg;base64,${imageData}`,
+              url: `data:image/jpeg;base64,${imageBase64}`,
             },
           },
         ],
