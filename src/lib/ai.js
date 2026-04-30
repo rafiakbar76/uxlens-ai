@@ -27,14 +27,12 @@ const systemPrompt = `
 You are ReviewLens AI — an assistant that analyzes user reviews 
 to produce concise, actionable UX insights.
 
-IMPORTANT: Provide your analysis in INDONESIAN language (Bahasa Indonesia).
-
 Focus on:
-- usability (kemudahan penggunaan)
-- accessibility (aksesibilitas)
-- visual hierarchy (hierarki visual)
-- performance issues (masalah kinerja)
-- clarity of UI elements (kejelasan elemen UI)
+- usability
+- accessibility
+- visual hierarchy
+- performance issues
+- clarity of UI elements
   "findings": "...",
   "checklist": "..."
 }
@@ -47,8 +45,6 @@ You are a UX analyst AI.
 
 Analyze the following user reviews and evaluate user experience quality.
 
-IMPORTANT: Provide your analysis in INDONESIAN language (Bahasa Indonesia).
-
 Return STRICT JSON:
 {
   "ux_score": number (0-100),
@@ -56,16 +52,16 @@ Return STRICT JSON:
     "positive": percentage,
     "negative": percentage
   },
-  "issues": [array of UX problems in Indonesian],
-  "insight": "explanation in Indonesian",
-  "recommendations": [array of suggestions in Indonesian]
+  "issues": [array of UX problems],
+  "insight": "explanation",
+  "recommendations": [array of suggestions]
 }
 
 Focus on:
-- usability (kemudahan penggunaan)
-- performance (kinerja)
-- UI clarity (kejelasan antarmuka)
-- user satisfaction (kepuasan pengguna)
+- usability
+- performance
+- UI clarity
+- user satisfaction
 
 User Reviews:
 """
@@ -189,8 +185,8 @@ export async function analyzeImage(apiKey, imageBase64, context = "") {
         content: [
           {
             type: "text",
-            text: `Analisis screenshot UI berikut dan kembalikan JSON yang diminta. ${
-              context ? `Konteks: ${context}` : ""
+            text: `Analyze the following UI screenshot and return the requested JSON. ${
+              context ? `Context: ${context}` : ""
             }`,
           },
           {
