@@ -1,6 +1,3 @@
-import dotenv from 'dotenv'
-dotenv.config({ path: '.env.local' })
-
 import { analyzeReviews, analyzeImage } from '../src/lib/ai.js'
 import formidable from 'formidable'
 import fs from 'fs/promises'
