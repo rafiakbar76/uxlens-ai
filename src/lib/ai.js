@@ -6,11 +6,18 @@ function getOpenAIClient(apiKey) {
     throw new Error('OPENROUTER_API_KEY environment variable is not set');
   }
 
+  // Dynamic referer based on environment
+  const referer = typeof window !== 'undefined'
+    ? window.location.origin
+    : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'https://uxlens-ai-ochre.vercel.app';
+
   return new OpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
     apiKey: key,
     defaultHeaders: {
-      'HTTP-Referer': 'http://localhost:5173',
+      'HTTP-Referer': referer,
       'X-OpenRouter-Title': 'ReviewLens AI',
     },
   });
