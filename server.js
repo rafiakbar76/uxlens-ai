@@ -72,7 +72,7 @@ app.post("/api/analyze", async (req, res) => {
     // ================= VALIDATION =================
     if (!reviews && !url && !imageData) {
       return res.status(400).json({
-        error: "Input tidak valid: berikan 'reviews' atau upload gambar",
+        error: "Missing input: provide 'reviews' or upload an image",
       });
     }
 
@@ -80,7 +80,7 @@ app.post("/api/analyze", async (req, res) => {
 
     if (!apiKey) {
       return res.status(500).json({
-        error: "API key tidak ditemukan",
+        error: "API key not found",
       });
     }
 
@@ -92,7 +92,7 @@ app.post("/api/analyze", async (req, res) => {
       insight = await analyzeImage(apiKey, imageData, context);
     } else {
       return res.status(400).json({
-        error: "Hanya ulasan dan gambar yang didukung",
+        error: "Only reviews and images are supported",
       });
     }
 
@@ -101,9 +101,9 @@ app.post("/api/analyze", async (req, res) => {
   } catch (error) {
     console.error("API ERROR:", error);
 
-    let errorMessage = error.message || 'Terjadi kesalahan internal server'
+    let errorMessage = error.message || 'Internal server error'
     if (error.status === 429) {
-      errorMessage = 'Batas rate tercapai. Coba lagi dalam beberapa menit, atau gunakan API key OpenRouter Anda sendiri untuk batas yang lebih tinggi.'
+      errorMessage = 'Rate limit exceeded. Please try again in a few minutes, or consider getting your own OpenRouter API key for higher limits.'
     }
 
     return res.status(error.status || 500).json({
