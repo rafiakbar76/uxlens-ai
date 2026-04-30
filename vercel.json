@@ -4,7 +4,5 @@
   "framework": "vite",
   "env": {
     "VITE_API_URL": "https://uxlens-ai-production.up.railway.app"
-        "OPENROUTER_API_KEY": "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",
-    "OPENAI_API_KEY": " 
   }
 }
