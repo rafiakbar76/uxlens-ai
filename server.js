@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
-dotenv.config({ path: ".env" });
+dotenv.config();
 
 import express from "express";
+import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import formidable from "formidable";
@@ -14,7 +15,22 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(express.json());
+// CORS configuration for Vercel frontend
+const corsOptions = {
+  origin: [
+    'http://localhost:5173', // Local development
+    'http://localhost:3000', // Alternative local
+    'https://uxlens-ai-ochre.vercel.app', // Vercel production
+    /\.vercel\.app$/, // Any Vercel domain
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 console.log("Environment variables loaded:");
 console.log("OPENROUTER_API_KEY:", process.env.OPENROUTER_API_KEY ? "SET" : "NOT SET");
