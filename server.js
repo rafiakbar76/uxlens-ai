@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import formidable from "formidable";
 import fs from "fs/promises";
-import { analyzeImage, analyzeReviews, analyzePage } from './src/lib/ai.js'
+import { analyzeImage, analyzeReviews, analyzePage } from "./src/lib/ai.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,22 +15,17 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3001;
 
-// CORS configuration for Vercel frontend
-const corsOptions = {
-  origin: [
-    'http://localhost:5173', // Local development
-    'http://localhost:3000', // Alternative local
-    'https://uxlens-ai-ochre.vercel.app', // Vercel production
-    /\.vercel\.app$/, // Any Vercel domain
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
+// ================= CORS (FIX WAJIB) =================
+app.use(cors({
+  origin: true, // allow all (biar ga ribet di Railway + Vercel)
+  credentials: true
+}));
 
-app.use(cors(corsOptions));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.options("*", cors());
+
+// ================= MIDDLEWARE =================
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 console.log("Environment variables loaded:");
 console.log("OPENROUTER_API_KEY:", process.env.OPENROUTER_API_KEY ? "SET" : "NOT SET");
@@ -46,9 +41,8 @@ app.post("/api/analyze", async (req, res) => {
     let imageData = null;
     let context = "";
 
-    // ================= HANDLE INPUT TYPES =================
+    // ===== HANDLE INPUT =====
     if (contentType.includes("multipart/form-data")) {
-      // Handle file upload
       const form = formidable({ multiples: false });
       const [fields, files] = await form.parse(req);
 
@@ -58,17 +52,15 @@ app.post("/api/analyze", async (req, res) => {
       if (uploadedFile) {
         const buffer = await fs.readFile(uploadedFile.filepath);
         imageData = buffer.toString("base64");
-        console.log("Image received, size:", imageData.length);
       }
     } else {
-      // Handle JSON input
       const body = req.body || {};
       reviews = body.reviews;
       url = body.url;
       context = body.context || "";
     }
 
-    // ================= VALIDATION =================
+    // ===== VALIDASI =====
     if (!reviews && !url && !imageData) {
       return res.status(400).json({
         error: "Missing input: provide 'reviews', 'url', or upload an image",
@@ -83,8 +75,9 @@ app.post("/api/analyze", async (req, res) => {
       });
     }
 
-    // ================= CALL AI =================
+    // ===== CALL AI =====
     let insight;
+
     if (reviews) {
       insight = await analyzeReviews(apiKey, reviews);
     } else if (imageData) {
@@ -96,22 +89,13 @@ app.post("/api/analyze", async (req, res) => {
     return res.json(insight);
 
   } catch (error) {
-  console.error("API ERROR:", error);
+    console.error("API ERROR:", error);
 
-  return res.status(200).json({
-    summary: "Fallback analysis",
-    findings: "AI temporarily unavailable (rate limit / no credits)",
-    checklist: "Try again later or use your own API key"
-  });
-}
-
-    let errorMessage = error.message || 'Internal server error'
-    if (error.status === 429) {
-      errorMessage = 'Rate limit exceeded. Please try again in a few minutes, or consider getting your own OpenRouter API key for higher limits.'
-    }
-
-    return res.status(error.status || 500).json({
-      error: errorMessage,
+    // fallback supaya frontend tidak crash
+    return res.status(200).json({
+      summary: "Fallback analysis",
+      findings: "AI temporarily unavailable (rate limit / no credits)",
+      checklist: "Try again later or use your own API key"
     });
   }
 });
@@ -128,6 +112,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+// ================= START SERVER =================
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
