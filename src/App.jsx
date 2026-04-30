@@ -54,7 +54,10 @@ function AnalyzePage() {
       const headers = { 'Content-Type': 'application/json' }
       const body = JSON.stringify({ reviews })
 
-      const res = await fetch('/api/analyze', {
+      // Use environment variable for API URL, fallback to Railway URL
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://uxlens-ai-production.up.railway.app'
+
+      const res = await fetch(`${apiUrl}/api/analyze`, {
         method: 'POST',
         headers,
         body,
