@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import formidable from "formidable";
 import fs from "fs/promises";
-import { analyzeImage, analyzeReviews } from './src/lib/ai.js'
+import { analyzeImage, analyzeReviews, analyzePage } from './src/lib/ai.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -96,7 +96,14 @@ app.post("/api/analyze", async (req, res) => {
     return res.json(insight);
 
   } catch (error) {
-    console.error("API ERROR:", error);
+  console.error("API ERROR:", error);
+
+  return res.status(200).json({
+    summary: "Fallback analysis",
+    findings: "AI temporarily unavailable (rate limit / no credits)",
+    checklist: "Try again later or use your own API key"
+  });
+}
 
     let errorMessage = error.message || 'Internal server error'
     if (error.status === 429) {
@@ -114,6 +121,9 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "dist")));
 
   app.get("*", (req, res) => {
+    if (req.path.startsWith("/api")) {
+      return res.status(404).json({ error: "API route not found" });
+    }
     res.sendFile(path.join(__dirname, "dist/index.html"));
   });
 }
